@@ -1,0 +1,1 @@
+# SYQ7E2_P-rhuzamos_Eszk-z-k
