@@ -10,7 +10,7 @@
 #include <CL/cl.h>
 
 
-char* load_kernel_source(const char* const path)
+char* load_kernel_source(const char* path)
 {
     FILE* source_file;
     char* source_code;
@@ -37,7 +37,7 @@ const int SAMPLE_SIZE = 200;
 int main(void)
 {    cl_int err;
     
-    const char* kernel_code = load_kernel_source("kernell/kernell.cl");
+    const char* kernel_code = load_kernel_source("kernel/kernel.cl");
     
   
     // Get platform
@@ -78,7 +78,7 @@ int main(void)
 
     // Create the host buffer and initialize it
     int* host_buffer = (int*)malloc(SAMPLE_SIZE * sizeof(int));
-    for (i = 0; i < SAMPLE_SIZE; ++i) {
+    for (int i = 0; i < SAMPLE_SIZE; ++i) {
         host_buffer[i] = i;
     }
 
@@ -136,7 +136,7 @@ int main(void)
         NULL
     );
 
-    for (i = 0; i < SAMPLE_SIZE; ++i) {
+    for (int i = 0; i < SAMPLE_SIZE; ++i) {
         printf("[%d] = %d, ", i, host_buffer[i]);
     }
 
