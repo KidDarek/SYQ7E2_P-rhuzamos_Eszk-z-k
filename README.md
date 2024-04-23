@@ -2,5 +2,4 @@
 ## Beadandó feladat: egy nagy számról megmondani hogy prím-e?
 
 párhuzamosítás:ű
-###prím számok kiszámítása (a szám feléig)
-###a nagyszám megnézése hogy az adott szám osztója e.
+prím számok kiszámítása (a szám feléig), a nagyszám megnézése hogy az adott szám osztója e.
