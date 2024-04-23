@@ -36,8 +36,21 @@ const int SAMPLE_SIZE = 200;
 
 int main(void)
 {    cl_int err;
-    
+    int number = scanf();
+    int divders[] = new int[number/2];
+    int currentDivIndex = 0;
     const char* kernel_code = load_kernel_source("kernel/kernel.cl");
+
+    for (int i = 2; i < number/2; i++)
+    {
+        if (number%i == 0 )
+        {
+            dividers[currentDivIndex] = i;
+            currentDivIndex++;
+        }
+    }
+
+    
     
   
     // Get platform
