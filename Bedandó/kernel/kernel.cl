@@ -1,10 +1,25 @@
-__kernel void lazy_kernel(__global int* buffer, int n) 
+__kernel void oszto(__global int* buffer, int n, int benum) 
 {
-    if(get_global_id(0) % 2 == 0)
+    int num = get_global_id(0) + 2;
+    int truenum = 0;
+    for (int j = 2; j <= num; j++)
+        {
+            if (num % j == 0 && num != j)
+            {
+                break;
+            }
+            else if (num % j == 0 && num == j)
+            {
+                truenum = num;
+            }
+        }
+    if(benum % truenum == 0)
     {
-        buffer[get_global_id(0)] = 11;
-    }
-    else{
-        buffer[get_global_id(0)] = 2; 
-    }
+        buffer[get_global_id(0)] = 0;
+    } 
+    else
+    {
+        buffer[get_global_id(0)] = 1;
+    } 
+
 }
