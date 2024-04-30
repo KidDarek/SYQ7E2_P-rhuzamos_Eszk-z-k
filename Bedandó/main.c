@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <omp.h>
 #include <windows.h>
+#include <time.h>
 
 #include <CL/cl.h>
 
@@ -35,13 +36,14 @@ char *load_kernel_source(const char *path)
 int main(void)
 {
     cl_int err;
-    int number = 6721007;
+    clock_t start1 = clock();
+    int number = 1200000000;
     int SAMPLE_SIZE = sqrt(number);
     int dividers[(int)(sqrt(number) + 1)];
     int currentDivIndex = 0;
     const char *kernel_code = load_kernel_source("kernel/kernel.cl");
 
-    /*for (int i = 2; i <= sqrt(number); i++)
+    for (int i = 2; i <= sqrt(number); i++)
     {
         for (int j = 2; j <= i; j++)
         {
@@ -53,12 +55,12 @@ int main(void)
             {
                 dividers[currentDivIndex] = i;
                 currentDivIndex++;
-                printf("%d \n", i);
+                //printf("%d \n", i);
             }
         }
-    }*/
+    }
     int isPrime = 1;
-    /*for (int i = 0; i < sizeof(dividers) / sizeof(dividers[0]); i++)
+    for (int i = 0; i < sizeof(dividers) / sizeof(dividers[0]); i++)
     {
         if (number % dividers[i] == 0)
         {
@@ -66,7 +68,11 @@ int main(void)
             printf("Nem prim mert %d - vel osztható \n", dividers[i]);
             break;
         }
-    }*/
+    }
+
+    clock_t end1 = clock();
+    printf("runtime: %f \n", (double)(end1 - start1) / CLOCKS_PER_SEC);
+    clock_t start2 = clock();
 
     // Get platform
     cl_uint n_platforms;
@@ -167,7 +173,7 @@ int main(void)
 
     for (int i = 0; i < SAMPLE_SIZE; ++i)
     {
-        printf("[%d] = %d, ", i, host_buffer[i]);
+        //printf("[%d] = %d, ", i, host_buffer[i]);
         if (host_buffer[i] == 0)
         {
             isPrime = 0;
@@ -181,7 +187,8 @@ int main(void)
     {
         printf("A Szam nem prim \n");
     }
-
+    clock_t end2 = clock();
+    printf("runtime: %f \n", (double)(end2 - start2) / CLOCKS_PER_SEC);
     // Release the resources
     clReleaseKernel(kernel1);
     clReleaseProgram(program);
