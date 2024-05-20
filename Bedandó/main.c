@@ -37,9 +37,14 @@ int main(void)
 {
     cl_int err;
     clock_t start1 = clock();
-    int number = 1200000000;
+    int number = 1866326400;
     int SAMPLE_SIZE = sqrt(number);
     int dividers[(int)(sqrt(number) + 1)];
+    for (int i = 0; i < sizeof(dividers) / sizeof(dividers[0]); i++)
+    {
+        dividers[i] = 2;
+    }
+
     int currentDivIndex = 0;
     const char *kernel_code = load_kernel_source("kernel/kernel.cl");
 
@@ -55,7 +60,7 @@ int main(void)
             {
                 dividers[currentDivIndex] = i;
                 currentDivIndex++;
-                //printf("%d \n", i);
+                // printf("%d \n", i);
             }
         }
     }
@@ -72,7 +77,6 @@ int main(void)
 
     clock_t end1 = clock();
     printf("runtime: %f \n", (double)(end1 - start1) / CLOCKS_PER_SEC);
-    clock_t start2 = clock();
 
     // Get platform
     cl_uint n_platforms;
@@ -114,79 +118,84 @@ int main(void)
 
     // Create the host buffer and initialize it
     int *host_buffer = (int *)malloc(SAMPLE_SIZE * sizeof(int));
-    for (int i = 0; i < SAMPLE_SIZE; ++i)
-    {
-        host_buffer[i] = i;
-    }
-
     // Create the device buffer
     cl_mem device_buffer = clCreateBuffer(context, CL_MEM_READ_WRITE, SAMPLE_SIZE * sizeof(int), NULL, NULL);
 
-    // Set kernel arguments
-    clSetKernelArg(kernel1, 0, sizeof(cl_mem), (void *)&device_buffer);
-    clSetKernelArg(kernel1, 1, sizeof(int), (void *)&SAMPLE_SIZE);
-    clSetKernelArg(kernel1, 2, sizeof(int), (void *)&number);
-
     // Create the command queue
     cl_command_queue command_queue = clCreateCommandQueue(context, device_id, NULL, NULL);
-
-    // Host buffer -> Device buffer
-    clEnqueueWriteBuffer(
-        command_queue,
-        device_buffer,
-        CL_FALSE,
-        0,
-        SAMPLE_SIZE * sizeof(int),
-        host_buffer,
-        0,
-        NULL,
-        NULL);
-
-    // Size specification
-    size_t local_work_size = 256;
-    size_t n_work_groups = (SAMPLE_SIZE + local_work_size + 1) / local_work_size;
-    size_t global_work_size = n_work_groups * local_work_size;
-
-    // Apply the kernel on the range
-    clEnqueueNDRangeKernel(
-        command_queue,
-        kernel1,
-        1,
-        NULL,
-        &global_work_size,
-        &local_work_size,
-        0,
-        NULL,
-        NULL);
-
-    // Host buffer <- Device buffer
-    clEnqueueReadBuffer(
-        command_queue,
-        device_buffer,
-        CL_TRUE,
-        0,
-        SAMPLE_SIZE * sizeof(int),
-        host_buffer,
-        0,
-        NULL,
-        NULL);
-
-    for (int i = 0; i < SAMPLE_SIZE; ++i)
+    int isPrime2 = 1;
+    clock_t start2 = clock();
+    for (int j = 0; j < (SAMPLE_SIZE / 100) + 1; j++)
     {
-        //printf("[%d] = %d, ", i, host_buffer[i]);
-        if (host_buffer[i] == 0)
+        for (int i = 0; i < 100; ++i)
         {
-            isPrime = 0;
+            host_buffer[i + (100 * j)] = i + (100 * j);
+        }
+
+        // Set kernel arguments
+        clSetKernelArg(kernel1, 0, sizeof(cl_mem), (void *)&device_buffer);
+        clSetKernelArg(kernel1, 1, sizeof(int), (void *)&number);
+
+        // Host buffer -> Device buffer
+        clEnqueueWriteBuffer(
+            command_queue,
+            device_buffer,
+            CL_FALSE,
+            0,
+            SAMPLE_SIZE * sizeof(int),
+            host_buffer,
+            0,
+            NULL,
+            NULL);
+
+        // Size specification
+        size_t local_work_size = 256;
+        size_t n_work_groups = (SAMPLE_SIZE + local_work_size + 1) / local_work_size;
+        size_t global_work_size = n_work_groups * local_work_size;
+
+        // Apply the kernel on the range
+        clEnqueueNDRangeKernel(
+            command_queue,
+            kernel1,
+            1,
+            NULL,
+            &global_work_size,
+            &local_work_size,
+            0,
+            NULL,
+            NULL);
+
+        // Host buffer <- Device buffer
+        clEnqueueReadBuffer(
+            command_queue,
+            device_buffer,
+            CL_TRUE,
+            0,
+            SAMPLE_SIZE * sizeof(int),
+            host_buffer,
+            0,
+            NULL,
+            NULL);
+
+        for (int i = 0; i < 100; ++i)
+        {
+            // printf("[%d] = %d, ", i + (100 * j), host_buffer[i + (100 * j)]);
+            if (host_buffer[i + (100 * j)] == 0)
+            {
+                isPrime2 = 0;
+            }
+        }
+        if (isPrime2 == 0)
+        {
+            printf("A Szam nem prim \n");
+            break;
         }
     }
-    if (isPrime == 1)
+    if (isPrime2 == 1)
     {
         printf("A Szam prim \n");
     }
-    else
-    {
-        printf("A Szam nem prim \n");
-    }
+
     clock_t end2 = clock();
     printf("runtime: %f \n", (double)(end2 - start2) / CLOCKS_PER_SEC);
     // Release the resources

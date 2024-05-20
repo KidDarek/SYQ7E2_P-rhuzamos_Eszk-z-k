@@ -1,4 +1,4 @@
-__kernel void oszto(__global int* buffer, int n, int benum) 
+__kernel void oszto(__global int* buffer, int benum) 
 {
     int num = get_global_id(0) + 2;
     int truenum = 0;
