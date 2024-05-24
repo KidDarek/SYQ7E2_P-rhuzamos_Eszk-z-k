@@ -40,6 +40,8 @@ int main(void)
     int number = 1866326400;
     int SAMPLE_SIZE = sqrt(number);
     int dividers[(int)(sqrt(number) + 1)];
+    // Léptetés megadása itt. Ez fogja később megmondani hogy hány értékenként nézzük hogy volt e prím
+    int step = 100;
     for (int i = 0; i < sizeof(dividers) / sizeof(dividers[0]); i++)
     {
         dividers[i] = 2;
@@ -125,11 +127,11 @@ int main(void)
     cl_command_queue command_queue = clCreateCommandQueue(context, device_id, NULL, NULL);
     int isPrime2 = 1;
     clock_t start2 = clock();
-    for (int j = 0; j < (SAMPLE_SIZE / 100) + 1; j++)
+    for (int j = 0; j < (SAMPLE_SIZE / step) + 1; j++)
     {
-        for (int i = 0; i < 100; ++i)
+        for (int i = 0; i < step; ++i)
         {
-            host_buffer[i + (100 * j)] = i + (100 * j);
+            host_buffer[i + (step * j)] = i + (step * j);
         }
 
         // Set kernel arguments
@@ -177,10 +179,10 @@ int main(void)
             NULL,
             NULL);
 
-        for (int i = 0; i < 100; ++i)
+        for (int i = 0; i < step; ++i)
         {
             // printf("[%d] = %d, ", i + (100 * j), host_buffer[i + (100 * j)]);
-            if (host_buffer[i + (100 * j)] == 0)
+            if (host_buffer[i + (step * j)] == 0)
             {
                 isPrime2 = 0;
             }
