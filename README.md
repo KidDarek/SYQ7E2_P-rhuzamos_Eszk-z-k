@@ -19,3 +19,6 @@
 - A prímek számolását és a szám elosztását kiadjuk a videókártya szálaira.
 - Egyszerre mindig csak 100 szálra adunk ki ezzel garantálva hogyha nem prím akkor nem kell az összes értéken végig menni
 - Ha nem talál megfelelő osztót akkor a program halad tovább
+
+
+- Megfigyelhető hogy a párhuzamosítás akkor működik a legjobban ha az osztó hamar megtalálható a számok között
